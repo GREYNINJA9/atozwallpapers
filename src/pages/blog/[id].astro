@@ -1,0 +1,86 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTASection from '../../components/CTASection.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
+import { site } from '../../data/site';
+import { articleJsonLd, breadcrumbJsonLd } from '../../scripts/localBusiness';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const path = `/blog/${entry.id}/`;
+const shareUrl = `${site.url}${path}`;
+---
+
+<BaseLayout
+  title={d.title.length > 55 ? d.title.slice(0, 52) + '…' : d.title}
+  description={d.description}
+  ogImage={d.ogImage || d.heroImage}
+  ogType="article"
+  article={{
+    publishedTime: d.pubDate.toISOString(),
+    modifiedTime: (d.updatedDate || d.pubDate).toISOString(),
+  }}
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Blog', path: '/blog/' },
+      { name: d.title, path },
+    ]),
+    articleJsonLd({
+      title: d.title,
+      description: d.description,
+      path,
+      image: d.heroImage,
+      datePublished: d.pubDate.toISOString(),
+      dateModified: (d.updatedDate || d.pubDate).toISOString(),
+    }),
+  ]}
+>
+  <article>
+    <header class="section-pad !pb-8">
+      <div class="container-site max-w-3xl">
+        <p class="text-sm text-charcoal-muted">
+          <a href="/blog/" class="text-terracotta no-underline hover:underline">Blog</a>
+        </p>
+        <h1 class="mt-3 text-4xl sm:text-5xl">{d.title}</h1>
+        <time class="mt-4 block text-sm text-charcoal-muted" datetime={d.pubDate.toISOString()}>
+          {d.pubDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </time>
+      </div>
+    </header>
+    <div class="container-site max-w-3xl">
+      <img
+        src={d.heroImage}
+        alt={`PLACEHOLDER hero for ${d.title}`}
+        width="1200"
+        height="675"
+        class="mb-10 aspect-video w-full rounded-lg object-cover"
+        fetchpriority="high"
+      />
+      <div class="prose-site fade-up">
+        <Content />
+      </div>
+      <div class="mt-10 flex flex-wrap gap-2 border-t border-charcoal/10 pt-6">
+        <a class="btn-secondary text-xs" href={`https://wa.me/?text=${encodeURIComponent(d.title + ' ' + shareUrl)}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a class="btn-secondary text-xs" href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a class="btn-secondary text-xs" href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(site.url + d.heroImage)}&description=${encodeURIComponent(d.title)}`} target="_blank" rel="noopener noreferrer">Pinterest</a>
+        <button type="button" class="btn-secondary text-xs" id="copy-blog" data-url={shareUrl}>Copy link</button>
+      </div>
+    </div>
+  </article>
+  <CTASection />
+</BaseLayout>
+
+<script>
+  document.getElementById('copy-blog')?.addEventListener('click', async (e) => {
+    const url = (e.currentTarget as HTMLElement).dataset.url;
+    if (url) await navigator.clipboard.writeText(url).catch(() => {});
+  });
+</script>

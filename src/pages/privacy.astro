@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site, fullAddress } from '../data/site';
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="Privacy policy for A to Z Wallpapers & Interiors — how we handle enquiry data, analytics and cookies (India DPDP-aware)."
+>
+  <section class="section-pad">
+    <article class="container-site prose-site max-w-3xl">
+      <h1>Privacy policy</h1>
+      <p>Effective: {site.legal.privacyEffective}. Business: {site.name}, {fullAddress()}.</p>
+      <h2>Data we collect</h2>
+      <p>
+        When you submit a form we collect name, phone, optional email and project details, plus attribution fields
+        (UTM parameters, click IDs, landing page, referrer) stored in your browser session and sent with the enquiry.
+      </p>
+      <h2>How we use data</h2>
+      <p>
+        To respond to enquiries, provide quotes and improve our services. We do not sell personal data.
+        Owner email / WhatsApp alerts: TODO-CONFIRM contact channels in site.ts.
+      </p>
+      <h2>Cookies & analytics</h2>
+      <p>
+        Marketing and analytics tags (GTM / GA4 / Ads / Bing UET / Meta) load only after you accept the consent banner.
+        You can reject analytics cookies; essential session storage for form attribution may still work.
+      </p>
+      <h2>Retention & rights</h2>
+      <p>
+        Enquiry rows are retained in our Google Sheet until deleted by the business. To request access or deletion,
+        contact us via the <a href="/contact/">contact page</a> (email TODO-CONFIRM).
+      </p>
+      <h2>Third parties</h2>
+      <p>Google (Sheets / Apps Script / optional analytics), WhatsApp click-to-chat, and optional CallMeBot if enabled.</p>
+    </article>
+  </section>
+</BaseLayout>

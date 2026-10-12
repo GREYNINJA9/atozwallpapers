@@ -1,0 +1,131 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTASection from '../../components/CTASection.astro';
+import FaqAccordion from '../../components/islands/FaqAccordion';
+import Lightbox from '../../components/islands/Lightbox';
+import { site } from '../../data/site';
+import { breadcrumbJsonLd, faqJsonLd, serviceJsonLd } from '../../scripts/localBusiness';
+
+export async function getStaticPaths() {
+  const walls = await getCollection('wallpapers');
+  return walls.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const gallery = d.gallery.map((src) => ({
+  src,
+  alt: `PLACEHOLDER gallery image for ${d.title}`,
+}));
+---
+
+<BaseLayout
+  title={d.title.length > 55 ? d.title.slice(0, 52) + '…' : d.title}
+  description={d.description}
+  ogImage={d.heroImage}
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Wallpapers', path: '/wallpapers/' },
+      { name: d.title, path: `/wallpapers/${entry.id}/` },
+    ]),
+    serviceJsonLd({
+      name: d.title,
+      description: d.description,
+      path: `/wallpapers/${entry.id}/`,
+      image: d.heroImage,
+    }),
+    ...(d.faqs.length ? [faqJsonLd(d.faqs)] : []),
+  ]}
+>
+  <section class="relative min-h-[48vh] overflow-hidden">
+    <img
+      src={d.heroImage}
+      alt={`PLACEHOLDER hero for ${d.title}`}
+      width="1600"
+      height="900"
+      class="absolute inset-0 h-full w-full object-cover"
+      fetchpriority="high"
+    />
+    <div class="absolute inset-0 bg-charcoal/45" />
+    <div class="container-site relative flex min-h-[48vh] items-end pb-12 pt-24">
+      <div class="glass max-w-2xl rounded-lg p-6">
+        <p class="text-xs font-medium tracking-wide text-terracotta uppercase">Wallpaper · Faridabad</p>
+        <h1 class="mt-2 text-3xl sm:text-4xl">{d.title}</h1>
+        {
+          d.startingPrice ? (
+            <p class="mt-3 text-sm text-charcoal-muted">Starting from {d.startingPrice}</p>
+          ) : (
+            <p class="mt-3 text-sm text-charcoal-muted">Starting price: TODO-CONFIRM with owner before publishing.</p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad">
+    <div class="container-site grid gap-12 lg:grid-cols-3">
+      <article class="prose-site lg:col-span-2 fade-up">
+        <Content />
+      </article>
+      <aside class="space-y-4 fade-up">
+        <div class="rounded-lg border border-charcoal/10 bg-cream p-5 shadow-soft">
+          <p class="font-heading text-xl">Primary keyword</p>
+          <p class="mt-2 text-sm text-charcoal-muted">{d.primaryKeyword}</p>
+          <a href="/contact/" class="btn-primary mt-5 w-full" data-track="consultation_cta_click" data-track-location="wallpaper_sidebar">
+            Free Consultation Book Karein
+          </a>
+          <a href="/tools/wallpaper-calculator/" class="btn-secondary mt-3 w-full">Estimate rolls</a>
+        </div>
+        <div class="rounded-lg border border-charcoal/10 p-5 text-sm text-charcoal-muted">
+          <p class="font-medium text-charcoal">Also see</p>
+          <ul class="mt-2 space-y-2">
+            <li><a href="/wallpapers/" class="text-terracotta">All categories</a></li>
+            <li><a href="/projects/" class="text-terracotta">Projects</a></li>
+            <li><a href="/wallpaper-shop-sector-19-faridabad/" class="text-terracotta">Sector 19 shop page</a></li>
+            <li><a href="/services/wallpaper-installation/" class="text-terracotta">Installation</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {
+    gallery.length > 0 && (
+      <section class="section-pad bg-cream-dark/25" aria-labelledby="gal-h">
+        <div class="container-site">
+          <h2 id="gal-h" class="mb-8 text-3xl fade-up">Gallery</h2>
+          <div class="fade-up">
+            <Lightbox
+              client:visible
+              images={gallery}
+              pageUrl={`${site.url}/wallpapers/${entry.id}/`}
+              siteOrigin={site.url}
+            />
+          </div>
+          <p class="mt-4 text-xs text-charcoal-muted">
+            Portrait 2:3 tiles on mobile for Pinterest. Replace placeholders with real crops — see docs/social-playbook.md.
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    d.faqs.length > 0 && (
+      <section class="section-pad" aria-labelledby="faq-h">
+        <div class="container-site max-w-3xl">
+          <h2 id="faq-h" class="mb-8 text-3xl fade-up">FAQs</h2>
+          <FaqAccordion client:visible items={d.faqs} />
+        </div>
+      </section>
+    )
+  }
+
+  <CTASection />
+</BaseLayout>

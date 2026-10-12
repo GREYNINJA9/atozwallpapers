@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTASection from '../components/CTASection.astro';
+import { localities } from '../data/localities';
+import { site } from '../data/site';
+import { breadcrumbJsonLd, serviceJsonLd } from '../scripts/localBusiness';
+
+export function getStaticPaths() {
+  return localities.map((locality) => ({
+    params: { locality: locality.slug },
+    props: { locality },
+  }));
+}
+
+const { locality: loc } = Astro.props;
+---
+
+<BaseLayout
+  title={loc.title.length > 55 ? loc.title.slice(0, 52) + '…' : loc.title}
+  description={loc.description}
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: loc.h1, path: `/${loc.slug}/` },
+    ]),
+    serviceJsonLd({
+      name: loc.h1,
+      description: loc.description,
+      path: `/${loc.slug}/`,
+    }),
+  ]}
+>
+  <section class="section-pad">
+    <div class="container-site max-w-3xl">
+      <h1 class="text-4xl sm:text-5xl fade-up">{loc.h1}</h1>
+      <p class="mt-4 text-lg text-charcoal-muted leading-relaxed fade-up">{loc.intro}</p>
+      <ul class="mt-8 space-y-3 text-charcoal-muted fade-up">
+        {loc.unique.map((u) => <li class="flex gap-3"><span class="text-terracotta" aria-hidden="true">•</span><span>{u}</span></li>)}
+      </ul>
+      <div class="prose-site mt-10 fade-up">
+        {loc.body.map((p) => <p>{p}</p>)}
+        <h2>NAP for this area</h2>
+        <p>
+          Jobs may be on site in this locality; the business address we list everywhere is {site.address.full}.
+          Phone and hours remain TODO-CONFIRM in site.ts until verified.
+        </p>
+        <h2>Explore next</h2>
+        <ul>
+          {loc.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          <li><a href="/contact/">Contact / free consultation</a></li>
+          <li><a href="/blog/">Blog guides</a></li>
+        </ul>
+      </div>
+      <a href="/contact/" class="btn-primary mt-8" data-track="consultation_cta_click" data-track-location="locality">
+        {site.cta.primaryHinglish}
+      </a>
+    </div>
+  </section>
+  <CTASection />
+</BaseLayout>

@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site, fullAddress } from '../data/site';
+---
+
+<BaseLayout
+  title="Terms of Use"
+  description="Terms of use for the A to Z Wallpapers & Interiors website."
+>
+  <section class="section-pad">
+    <article class="container-site prose-site max-w-3xl">
+      <h1>Terms of use</h1>
+      <p>Effective: {site.legal.termsEffective}. Site operated by {site.name}, {fullAddress()}.</p>
+      <h2>Estimates</h2>
+      <p>
+        Online calculator results and any indicative prices are not binding quotes. Final pricing depends on site survey,
+        materials and confirmed scope.
+      </p>
+      <h2>Content</h2>
+      <p>
+        Placeholder images and draft copy must be replaced before advertising claims. Do not rely on unverified phone numbers,
+        prices or testimonials marked TODO-CONFIRM.
+      </p>
+      <h2>Liability</h2>
+      <p>
+        Website information is provided for general guidance. Installation and product warranties follow the written agreement
+        provided at booking.
+      </p>
+      <h2>Contact</h2>
+      <p>Questions: use the <a href="/contact/">contact form</a>.</p>
+    </article>
+  </section>
+</BaseLayout>

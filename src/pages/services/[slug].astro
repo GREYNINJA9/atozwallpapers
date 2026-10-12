@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTASection from '../../components/CTASection.astro';
+import { services } from '../../data/services';
+import { breadcrumbJsonLd, serviceJsonLd } from '../../scripts/localBusiness';
+
+export function getStaticPaths() {
+  return services.map((s) => ({ params: { slug: s.slug }, props: { service: s } }));
+}
+
+const { service: s } = Astro.props;
+---
+
+<BaseLayout
+  title={s.title.length > 55 ? s.title.slice(0, 52) + '…' : s.title}
+  description={s.description}
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Services', path: '/services/' },
+      { name: s.h1, path: `/services/${s.slug}/` },
+    ]),
+    serviceJsonLd({
+      name: s.h1,
+      description: s.description,
+      path: `/services/${s.slug}/`,
+    }),
+  ]}
+>
+  <section class="section-pad">
+    <div class="container-site max-w-3xl">
+      <p class="text-sm text-charcoal-muted">
+        <a href="/services/" class="text-terracotta no-underline hover:underline">Services</a>
+      </p>
+      <h1 class="mt-3 text-4xl sm:text-5xl">{s.h1}</h1>
+      <p class="mt-4 text-lg text-charcoal-muted leading-relaxed">{s.description}</p>
+      <p class="mt-6 text-sm">
+        <span class="font-semibold">Starting price:</span>{' '}
+        {s.startingPrice ?? 'TODO-CONFIRM with owner before publishing any ₹ figure.'}
+      </p>
+      <ul class="mt-8 list-disc space-y-2 pl-5 text-charcoal-muted">
+        {s.bullets.map((b) => <li>{b}</li>)}
+      </ul>
+      <div class="prose-site mt-10">
+        {s.body.map((p) => <p>{p}</p>)}
+        <h2>Next step</h2>
+        <p>
+          Pair this service with our
+          <a href="/wallpapers/">wallpaper collections</a> or the
+          <a href="/tools/wallpaper-calculator/">roll calculator</a>.
+          Book a free consultation — Free Consultation Book Karein — or message WhatsApp once the number is confirmed in site.ts.
+        </p>
+      </div>
+      <a href="/contact/" class="btn-primary mt-8" data-track="consultation_cta_click" data-track-location="service_page">
+        Book Free Consultation
+      </a>
+    </div>
+  </section>
+  <CTASection />
+</BaseLayout>

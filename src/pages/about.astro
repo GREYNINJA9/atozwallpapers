@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTASection from '../components/CTASection.astro';
+import { site, fullAddress } from '../data/site';
+import { breadcrumbJsonLd } from '../scripts/localBusiness';
+---
+
+<BaseLayout
+  title="About — Studio in Sector 19"
+  description="Meet A to Z Wallpapers & Interiors near DPS School, Sector 19, Faridabad. Consult, design & sample, then install — for homes across Delhi-NCR."
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'About', path: '/about/' },
+    ]),
+  ]}
+>
+  <section class="section-pad">
+    <div class="container-site grid gap-12 lg:grid-cols-2">
+      <div class="fade-up">
+        <h1 class="text-4xl sm:text-5xl">About the studio</h1>
+        <p class="mt-4 text-charcoal-muted leading-relaxed">
+          {site.name} helps Faridabad families and offices choose wallpapers and coordinated interior finishes that fit real rooms — not just catalogue photos.
+        </p>
+        <p class="mt-4 text-charcoal-muted leading-relaxed">
+          We are based at {fullAddress()}. Owner name, team bios and years in business: <strong class="font-medium text-charcoal">TODO-CONFIRM</strong> — do not invent staff or awards.
+        </p>
+        <h2 class="mt-10 text-2xl">Design philosophy</h2>
+        <p class="mt-3 text-charcoal-muted leading-relaxed">
+          Favour honest materials, correct scale for Indian apartment walls, and installation quality you can live with every day. Samples before commitment whenever possible.
+        </p>
+      </div>
+      <div class="fade-up">
+        <img
+          src="/images/hero-poster.jpg"
+          alt="PLACEHOLDER: replace with real studio or team photo"
+          width="1200"
+          height="900"
+          class="rounded-lg object-cover"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad bg-cream-dark/25" aria-labelledby="timeline-h">
+    <div class="container-site">
+      <h2 id="timeline-h" class="mb-10 text-3xl sm:text-4xl fade-up">3-step process</h2>
+      <ol class="relative grid gap-8 md:grid-cols-3">
+        {
+          [
+            { t: 'Consult', d: 'Call, WhatsApp or visit Sector 19. Share room goals and constraints.' },
+            { t: 'Design & Sample', d: 'Shortlist wallpapers or custom prints; review samples or proofs.' },
+            { t: 'Install', d: 'Schedule installation with clear prep notes and finishing checks.' },
+          ].map((s, i) => (
+            <li class="rounded-lg border border-charcoal/10 bg-cream p-6 fade-up">
+              <p class="text-sm font-semibold text-terracotta">0{i + 1}</p>
+              <p class="mt-2 font-heading text-2xl">{s.t}</p>
+              <p class="mt-2 text-sm text-charcoal-muted">{s.d}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+  <CTASection />
+</BaseLayout>

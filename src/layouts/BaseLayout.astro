@@ -1,0 +1,139 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import MobileStickyBar from '../components/MobileStickyBar.astro';
+import ConsentBanner from '../components/ConsentBanner.astro';
+import Analytics from '../components/Analytics.astro';
+import SEOHead from '../components/seo/SEOHead.astro';
+import JsonLd from '../components/seo/JsonLd.astro';
+import { site } from '../data/site';
+import { localBusinessJsonLd } from '../scripts/localBusiness';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  canonical?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  includeLocalBusiness?: boolean;
+  article?: { publishedTime?: string; modifiedTime?: string };
+  minimalHeader?: boolean;
+  hideChrome?: boolean;
+  preloadImage?: string;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  ogType,
+  noindex,
+  canonical,
+  jsonLd = [],
+  includeLocalBusiness = false,
+  article,
+  minimalHeader = false,
+  hideChrome = false,
+  preloadImage,
+} = Astro.props;
+
+const schemas = [
+  ...(includeLocalBusiness ? [localBusinessJsonLd()] : []),
+  ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd]),
+].filter(Boolean);
+---
+
+<!doctype html>
+<html lang={site.language}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#F6F1E9" />
+    <SEOHead
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      ogType={ogType}
+      noindex={noindex}
+      canonical={canonical}
+      article={article}
+    />
+    {
+      preloadImage && (
+        <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />
+      )
+    }
+    {schemas.length > 0 && <JsonLd data={schemas} />}
+    <Analytics />
+  </head>
+  <body class="flex min-h-dvh flex-col pb-16 md:pb-0">
+    <a href="#main" class="skip-link">Skip to content</a>
+    {!hideChrome && <Header minimal={minimalHeader} />}
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    {!hideChrome && (
+      <>
+        <Footer />
+        <WhatsAppButton />
+        <MobileStickyBar />
+      </>
+    )}
+    <ConsentBanner />
+    <script>
+      // Persist UTM + click IDs across navigation
+      const ATTR_KEYS = [
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_term',
+        'utm_content',
+        'gclid',
+        'msclkid',
+        'fbclid',
+      ] as const;
+
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const stored = JSON.parse(sessionStorage.getItem('atoz_attrs') || '{}');
+        for (const key of ATTR_KEYS) {
+          const v = params.get(key);
+          if (v) stored[key] = v;
+        }
+        if (!stored.landing_page) stored.landing_page = window.location.pathname + window.location.search;
+        if (!stored.referrer && document.referrer) stored.referrer = document.referrer;
+        sessionStorage.setItem('atoz_attrs', JSON.stringify(stored));
+        window.__ATOZ_ATTRS = stored;
+      } catch {
+        /* ignore private mode failures */
+      }
+
+      // Scroll fade-ins via IntersectionObserver
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce) {
+        const els = document.querySelectorAll('.fade-up');
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-visible');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+        );
+        els.forEach((el) => io.observe(el));
+      } else {
+        document.querySelectorAll('.fade-up').forEach((el) => el.classList.add('is-visible'));
+      }
+    </script>
+  </body>
+</html>

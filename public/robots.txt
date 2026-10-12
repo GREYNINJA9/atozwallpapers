@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /lp/
+Disallow: /thank-you/
+
+Sitemap: https://atozwallpapers.in/sitemap-index.xml

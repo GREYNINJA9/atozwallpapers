@@ -1,0 +1,156 @@
+---
+import { site, telHref, whatsappHref } from '../data/site';
+
+interface Props {
+  minimal?: boolean;
+}
+const { minimal = false } = Astro.props;
+const tel = telHref();
+const wa = whatsappHref();
+
+const nav = [
+  { href: '/wallpapers/', label: 'Wallpapers' },
+  { href: '/projects/', label: 'Projects' },
+  { href: '/services/', label: 'Services' },
+  { href: '/tools/wallpaper-calculator/', label: 'Estimate' },
+  { href: '/blog/', label: 'Blog' },
+  { href: '/about/', label: 'About' },
+  { href: '/contact/', label: 'Contact' },
+];
+---
+
+<header
+  class:list={[
+    'sticky top-0 z-50 glass',
+    'border-b border-charcoal/5',
+  ]}
+>
+  <div class="container-site flex h-16 items-center justify-between gap-4 lg:h-[4.25rem]">
+    <a href="/" class="group flex min-w-0 flex-col no-underline" aria-label={`${site.name} home`}>
+      <span class="font-heading text-lg font-semibold leading-tight text-charcoal sm:text-xl">
+        A to Z
+      </span>
+      <span class="truncate text-[0.65rem] font-medium tracking-wide text-charcoal-muted uppercase sm:text-xs">
+        Wallpapers & Interiors
+      </span>
+    </a>
+
+    {
+      !minimal && (
+        <nav class="hidden items-center gap-1 lg:flex" aria-label="Primary">
+          {nav.map((item) => (
+            <a
+              href={item.href}
+              class="btn-ghost rounded-lg px-3 py-2 text-sm font-medium text-charcoal-muted hover:text-charcoal"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+
+    <div class="flex items-center gap-2">
+      {
+        site.social.instagram && (
+          <a
+            href={site.social.instagram}
+            class="btn-ghost hidden sm:inline-flex"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+          >
+            Instagram
+          </a>
+        )
+      }
+      {
+        tel && (
+          <a
+            href={tel}
+            class="btn-ghost hidden items-center gap-1.5 sm:inline-flex"
+            data-track="call_click"
+            data-track-location="header"
+          >
+            <span class="sr-only">Call us</span>
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span class="text-sm">{site.phone.display}</span>
+          </a>
+        )
+      }
+      {
+        minimal && wa && (
+          <a href={wa} class="btn-secondary text-sm" data-track="whatsapp_click" data-track-location="header" target="_blank" rel="noopener noreferrer">
+            WhatsApp
+          </a>
+        )
+      }
+      <a
+        href="/contact/"
+        class="btn-primary text-sm"
+        data-track="consultation_cta_click"
+        data-track-location="header"
+      >
+        <span class="hidden sm:inline">{site.cta.primary}</span>
+        <span class="sm:hidden">Book</span>
+      </a>
+
+      {
+        !minimal && (
+          <button
+            type="button"
+            class="btn-ghost inline-flex lg:hidden"
+            aria-expanded="false"
+            aria-controls="mobile-nav"
+            id="menu-toggle"
+          >
+            <span class="sr-only">Open menu</span>
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+            </svg>
+          </button>
+        )
+      }
+    </div>
+  </div>
+
+  {
+    !minimal && (
+      <div id="mobile-nav" class="hidden border-t border-charcoal/5 lg:hidden" hidden>
+        <nav class="container-site flex flex-col gap-1 py-3" aria-label="Mobile">
+          {nav.map((item) => (
+            <a href={item.href} class="rounded-lg px-3 py-3 text-base font-medium text-charcoal hover:bg-cream-dark no-underline">
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+    )
+  }
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const panel = document.getElementById('mobile-nav');
+  toggle?.addEventListener('click', () => {
+    const open = panel?.hasAttribute('hidden') === false;
+    if (!panel || !toggle) return;
+    if (open) {
+      panel.hidden = true;
+      panel.classList.add('hidden');
+      toggle.setAttribute('aria-expanded', 'false');
+    } else {
+      panel.hidden = false;
+      panel.classList.remove('hidden');
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+  });
+</script>

@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTASection from '../../components/CTASection.astro';
+import { breadcrumbJsonLd } from '../../scripts/localBusiness';
+
+const cats = (await getCollection('wallpapers'))
+  .filter((w) => !w.data.draft)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Wallpapers in Faridabad"
+  description="Browse customised, 3D, waterproof, kids' room and mural wallpaper collections from A to Z Wallpapers & Interiors, Faridabad. Free consultation."
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Wallpapers', path: '/wallpapers/' },
+    ]),
+  ]}
+>
+  <section class="section-pad">
+    <div class="container-site">
+      <h1 class="max-w-2xl text-4xl sm:text-5xl fade-up">Wallpapers for Faridabad homes</h1>
+      <p class="mt-4 max-w-2xl text-charcoal-muted leading-relaxed fade-up">
+        From customised prints to waterproof and kids' rooms — pick a category for local guidance, gallery placeholders and FAQs.
+        Installation support included in how we work; confirm scope when you enquire.
+      </p>
+      <div class="mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          cats.map((w, i) => (
+            <a
+              href={`/wallpapers/${w.id}/`}
+              class:list={[
+                'group relative min-h-[240px] overflow-hidden rounded-lg no-underline fade-up',
+                i % 5 === 0 ? 'sm:col-span-2 sm:min-h-[320px]' : '',
+              ]}
+            >
+              <img
+                src={w.data.heroImage}
+                alt={`PLACEHOLDER: ${w.data.title}`}
+                width="800"
+                height="600"
+                loading="lazy"
+                class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-charcoal/75 to-transparent" />
+              <div class="absolute inset-x-0 bottom-0 p-5">
+                <h2 class="font-heading text-xl text-cream">{w.data.title}</h2>
+                <p class="mt-1 line-clamp-2 text-xs text-cream/75">{w.data.description}</p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+  <CTASection />
+</BaseLayout>

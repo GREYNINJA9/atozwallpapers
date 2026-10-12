@@ -1,0 +1,94 @@
+---
+import { site } from '../data/site';
+const gtmId = site.gtmId;
+---
+
+{
+  gtmId && (
+    <script is:inline define:vars={{ gtmId }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      window.gtag = gtag;
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500,
+      });
+      window.__ATOZ_GTM_ID = gtmId;
+    </script>
+  )
+}
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  window.atozTrack = function (event, payload = {}) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event, ...payload });
+  };
+
+  document.addEventListener('click', (e) => {
+    const el = e.target instanceof Element ? e.target.closest('[data-track]') : null;
+    if (!el) return;
+    const eventName = el.getAttribute('data-track');
+    if (!eventName) return;
+    window.atozTrack?.(eventName, {
+      location: el.getAttribute('data-track-location') || undefined,
+    });
+  });
+
+  let scrolled = false;
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (scrolled) return;
+      const h = document.documentElement;
+      const pct = (h.scrollTop + window.innerHeight) / h.scrollHeight;
+      if (pct >= 0.75) {
+        scrolled = true;
+        window.atozTrack?.('scroll_75');
+      }
+    },
+    { passive: true },
+  );
+
+  function loadGTM() {
+    const id = window.__ATOZ_GTM_ID;
+    if (!id || window.__ATOZ_GTM_LOADED) return;
+    window.__ATOZ_GTM_LOADED = true;
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtm.js?id=${id}`;
+    document.head.appendChild(s);
+    if (window.gtag) {
+      window.gtag('consent', 'update', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'granted',
+        analytics_storage: 'granted',
+      });
+    }
+  }
+
+  if (window.__ATOZ_GTM_ID && localStorage.getItem('atoz_consent') === 'granted') loadGTM();
+  window.addEventListener('consent:granted', loadGTM);
+</script>
+
+{
+  gtmId && (
+    <noscript>
+      <iframe
+        src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+        title="GTM"
+      />
+    </noscript>
+  )
+}

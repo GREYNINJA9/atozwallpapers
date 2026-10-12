@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTASection from '../../components/CTASection.astro';
+import { breadcrumbJsonLd } from '../../scripts/localBusiness';
+
+const posts = (await getCollection('blog'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+  title="Wallpaper Tips — Faridabad Blog"
+  description="Practical wallpaper and interior guides for Faridabad homes — costs, waterproof picks, small bedrooms and roll estimates."
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Blog', path: '/blog/' },
+    ]),
+  ]}
+>
+  <section class="section-pad">
+    <div class="container-site">
+      <h1 class="text-4xl sm:text-5xl fade-up">Blog</h1>
+      <p class="mt-4 max-w-2xl text-charcoal-muted fade-up">
+        Starter articles for local SEO. Expand with owner-approved detail before running ads to these URLs.
+      </p>
+      <ul class="mt-12 grid gap-6 sm:grid-cols-2">
+        {
+          posts.map((p) => (
+            <li class="fade-up">
+              <a href={`/blog/${p.id}/`} class="group block no-underline">
+                <img
+                  src={p.data.heroImage}
+                  alt={`PLACEHOLDER: ${p.data.title}`}
+                  width="1200"
+                  height="675"
+                  loading="lazy"
+                  class="aspect-video w-full rounded-lg object-cover transition duration-500 group-hover:opacity-95"
+                />
+                <h2 class="mt-4 font-heading text-2xl text-charcoal group-hover:text-terracotta">{p.data.title}</h2>
+                <p class="mt-2 text-sm text-charcoal-muted">{p.data.description}</p>
+                <time class="mt-2 block text-xs text-charcoal-muted/80" datetime={p.data.pubDate.toISOString()}>
+                  {p.data.pubDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}
+                </time>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+  <CTASection />
+</BaseLayout>

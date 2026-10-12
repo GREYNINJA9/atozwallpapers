@@ -1,0 +1,64 @@
+---
+/**
+ * India DPDP-aware consent: no GTM/GA/Ads/Meta until accept.
+ * Essential cookies (session UTM) do not require marketing consent.
+ */
+---
+
+<div
+  id="consent-banner"
+  class="fixed inset-x-0 bottom-0 z-[60] hidden border-t border-charcoal/10 bg-charcoal p-4 text-cream shadow-soft md:bottom-4 md:left-4 md:right-auto md:max-w-md md:rounded-lg md:border"
+  role="dialog"
+  aria-labelledby="consent-title"
+  aria-describedby="consent-desc"
+  hidden
+>
+  <p id="consent-title" class="font-heading text-base font-semibold">Cookies & analytics</p>
+  <p id="consent-desc" class="mt-2 text-sm text-cream/80 leading-relaxed">
+    We use analytics and advertising cookies (GA4, Google Ads, Bing UET, Meta) only after you accept.
+    Essential form attribution stays local in your browser.
+    <a href="/privacy/" class="text-cream underline">Privacy policy</a>
+  </p>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <button type="button" id="consent-accept" class="btn bg-cream text-charcoal hover:bg-cream-dark text-sm">
+      Accept
+    </button>
+    <button type="button" id="consent-reject" class="btn border border-cream/30 text-cream hover:bg-cream/10 text-sm">
+      Reject
+    </button>
+  </div>
+</div>
+
+<script>
+  const KEY = 'atoz_consent';
+  const banner = document.getElementById('consent-banner');
+  const accept = document.getElementById('consent-accept');
+  const reject = document.getElementById('consent-reject');
+
+  function show() {
+    if (!banner) return;
+    banner.hidden = false;
+    banner.classList.remove('hidden');
+  }
+  function hide() {
+    if (!banner) return;
+    banner.hidden = true;
+    banner.classList.add('hidden');
+  }
+
+  const existing = localStorage.getItem(KEY);
+  if (!existing) show();
+  else if (existing === 'granted') {
+    window.dispatchEvent(new CustomEvent('consent:granted'));
+  }
+
+  accept?.addEventListener('click', () => {
+    localStorage.setItem(KEY, 'granted');
+    hide();
+    window.dispatchEvent(new CustomEvent('consent:granted'));
+  });
+  reject?.addEventListener('click', () => {
+    localStorage.setItem(KEY, 'denied');
+    hide();
+  });
+</script>

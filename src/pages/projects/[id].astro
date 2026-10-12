@@ -1,0 +1,126 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTASection from '../../components/CTASection.astro';
+import BeforeAfter from '../../components/islands/BeforeAfter';
+import ShareButtons from '../../components/ShareButtons.astro';
+import { site } from '../../data/site';
+import { breadcrumbJsonLd } from '../../scripts/localBusiness';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const shareUrl = `${site.url}/projects/${entry.id}/`;
+---
+
+<BaseLayout
+  title={d.title.length > 55 ? d.title.slice(0, 52) + '…' : d.title}
+  description={d.description}
+  ogImage={d.afterImage}
+  ogType="article"
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Projects', path: '/projects/' },
+      { name: d.title, path: `/projects/${entry.id}/` },
+    ]),
+  ]}
+>
+  <section class="section-pad !pb-8">
+    <div class="container-site max-w-4xl">
+      <p class="text-sm text-charcoal-muted">
+        <a href="/projects/" class="text-terracotta no-underline hover:underline">Projects</a>
+        · {d.locationArea}
+      </p>
+      <h1 class="mt-3 text-4xl sm:text-5xl">{d.title}</h1>
+      <p class="mt-4 text-charcoal-muted">{d.description}</p>
+    </div>
+  </section>
+
+  <section class="pb-12">
+    <div class="container-site max-w-4xl fade-up">
+      <BeforeAfter
+        client:visible
+        beforeSrc={d.beforeImage}
+        afterSrc={d.afterImage}
+        beforeAlt={`PLACEHOLDER before — ${d.title}`}
+        afterAlt={`PLACEHOLDER after — ${d.title}`}
+      />
+    </div>
+  </section>
+
+  <section class="section-pad !pt-0">
+    <div class="container-site grid gap-10 lg:grid-cols-3">
+      <div class="prose-site lg:col-span-2 fade-up">
+        <Content />
+        {
+          d.clientQuote && (
+            <blockquote class="mt-8 border-l-2 border-terracotta pl-4 text-lg text-charcoal">
+              “{d.clientQuote}”
+            </blockquote>
+          )
+        }
+      </div>
+      <aside class="space-y-4 fade-up">
+        <dl class="rounded-lg border border-charcoal/10 bg-cream p-5 text-sm shadow-soft">
+          <div class="border-b border-charcoal/10 py-3">
+            <dt class="text-charcoal-muted">Wallpaper type</dt>
+            <dd class="mt-1 font-medium">{d.wallpaperType}</dd>
+          </div>
+          <div class="border-b border-charcoal/10 py-3">
+            <dt class="text-charcoal-muted">Room size</dt>
+            <dd class="mt-1 font-medium">{d.roomSize || 'TODO-CONFIRM'}</dd>
+          </div>
+          <div class="border-b border-charcoal/10 py-3">
+            <dt class="text-charcoal-muted">Budget range</dt>
+            <dd class="mt-1 font-medium">{d.budgetRange || 'TODO-CONFIRM'}</dd>
+          </div>
+          <div class="border-b border-charcoal/10 py-3">
+            <dt class="text-charcoal-muted">Timeline</dt>
+            <dd class="mt-1 font-medium">{d.timeline || 'TODO-CONFIRM'}</dd>
+          </div>
+          <div class="py-3">
+            <dt class="text-charcoal-muted">Location</dt>
+            <dd class="mt-1 font-medium">{d.locationArea} (area-level only)</dd>
+          </div>
+          {
+            d.materials && d.materials.length > 0 && (
+              <div class="border-t border-charcoal/10 py-3">
+                <dt class="text-charcoal-muted">Materials</dt>
+                <dd class="mt-1 font-medium">{d.materials.join(', ')}</dd>
+              </div>
+            )
+          }
+        </dl>
+
+        <div class="overflow-hidden rounded-lg border border-charcoal/10">
+          <img
+            src="/images/portrait-pinterest.jpg"
+            alt={`PLACEHOLDER Pinterest 2:3 crop for ${d.title}`}
+            width="800"
+            height="1200"
+            class="aspect-[2/3] w-full object-cover"
+            loading="lazy"
+          />
+          <p class="p-3 text-xs text-charcoal-muted">Portrait 2:3 for Pinterest — replace with a real project crop.</p>
+        </div>
+
+        <div class="rounded-lg border border-charcoal/10 p-5">
+          <p class="text-sm font-medium text-charcoal">Share</p>
+          <div class="mt-3">
+            <ShareButtons url={shareUrl} title={d.title} media={`${site.url}${d.afterImage}`} />
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+  <CTASection />
+</BaseLayout>

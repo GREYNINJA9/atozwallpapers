@@ -1,0 +1,120 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LeadForm from '../components/islands/LeadForm';
+import { site, fullAddress, telHref, whatsappHref } from '../data/site';
+import { breadcrumbJsonLd } from '../scripts/localBusiness';
+
+const tel = telHref();
+const wa = whatsappHref();
+---
+
+<BaseLayout
+  title="Contact — Free Consultation Faridabad"
+  description="Book a free wallpaper or interior consultation with A to Z Wallpapers & Interiors, Sector 19, Faridabad. Call, WhatsApp or send the form — we reply within one business day."
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Contact', path: '/contact/' },
+    ]),
+  ]}
+>
+  <section class="section-pad">
+    <div class="container-site grid gap-12 lg:grid-cols-2">
+      <div class="fade-up">
+        <h1 class="text-4xl sm:text-5xl">Contact</h1>
+        <p class="mt-4 text-charcoal-muted leading-relaxed">
+          {site.cta.replySla}. Prefer Hindi/Hinglish? Message us — Free Consultation Book Karein.
+        </p>
+
+        <dl class="mt-8 space-y-5 text-sm">
+          <div>
+            <dt class="font-semibold text-charcoal">Address</dt>
+            <dd class="mt-1 text-charcoal-muted">{fullAddress()}</dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-charcoal">Hours</dt>
+            <dd class="mt-1 text-charcoal-muted">
+              {site.hours.display}
+              {site.hours.note && <span class="block">{site.hours.note}</span>}
+            </dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-charcoal">Phone / WhatsApp</dt>
+            <dd class="mt-1 text-charcoal-muted">
+              {site.phone.display}
+              {!site.phone.e164 && (
+                <span class="mt-1 block text-xs text-terracotta">TODO-CONFIRM: directories show conflicting numbers — set site.ts before going live.</span>
+              )}
+            </dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-charcoal">Service area</dt>
+            <dd class="mt-1 text-charcoal-muted">
+              {site.serviceArea.primary}: {site.serviceArea.areas.join(', ')} · {site.serviceArea.nearby}
+            </dd>
+          </div>
+        </dl>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          {
+            tel && (
+              <a href={tel} class="btn-secondary" data-track="call_click" data-track-location="contact">
+                Call now
+              </a>
+            )
+          }
+          {
+            wa && (
+              <a
+                href={wa}
+                class="btn-primary"
+                data-track="whatsapp_click"
+                data-track-location="contact"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                WhatsApp
+              </a>
+            )
+          }
+        </div>
+
+        <div class="mt-10 overflow-hidden rounded-lg border border-charcoal/10 bg-cream-dark/40">
+          {
+            site.google.mapsEmbedUrl ? (
+              <iframe
+                title="Google Map — A to Z Wallpapers Faridabad"
+                src={site.google.mapsEmbedUrl}
+                class="aspect-[4/3] w-full border-0"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen
+              />
+            ) : (
+              <div class="flex aspect-[4/3] items-center justify-center p-6 text-center text-sm text-charcoal-muted">
+                <p>
+                  Map embed: TODO-CONFIRM Google Maps embed URL in site.ts
+                  <br />
+                  Approx. coordinates {site.geo.latitude}, {site.geo.longitude}
+                </p>
+              </div>
+            )
+          }
+        </div>
+      </div>
+
+      <div class="rounded-lg border border-charcoal/10 bg-cream p-6 shadow-soft sm:p-8 fade-up">
+        <h2 class="font-heading text-2xl">Book free consultation</h2>
+        <p class="mt-2 text-sm text-charcoal-muted">Name and phone required. Optional room details help us prepare.</p>
+        <div class="relative mt-6">
+          <LeadForm
+            client:idle
+            endpoint={site.formEndpoint}
+            whatsappDigits={site.phone.whatsapp}
+            sourceLabel="contact_page"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

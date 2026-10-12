@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTASection from '../../components/CTASection.astro';
+import WallpaperCalculator from '../../components/islands/WallpaperCalculator';
+import { site } from '../../data/site';
+import { breadcrumbJsonLd } from '../../scripts/localBusiness';
+---
+
+<BaseLayout
+  title="Wallpaper Roll Calculator"
+  description="Estimate wallpaper rolls for Faridabad rooms — wall size, doors/windows, wastage and roll coverage. Send the estimate to WhatsApp for an exact quote."
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Wallpaper calculator', path: '/tools/wallpaper-calculator/' },
+    ]),
+  ]}
+>
+  <section class="section-pad">
+    <div class="container-site">
+      <h1 class="max-w-2xl text-4xl sm:text-5xl fade-up">Wallpaper calculator</h1>
+      <p class="mt-4 max-w-2xl text-charcoal-muted leading-relaxed fade-up">
+        Enter wall width × height, subtract doors and windows, add {site.calculator.wastagePercentMin}–{site.calculator.wastagePercentMax}% wastage,
+        then divide by roll coverage (default {site.calculator.defaultRollCoverageSqFt} sq ft — configurable). Indicative only.
+      </p>
+      <div class="mt-10 fade-up">
+        <WallpaperCalculator
+          client:idle
+          defaultCoverage={site.calculator.defaultRollCoverageSqFt}
+          wastageMin={site.calculator.wastagePercentMin}
+          wastageMax={site.calculator.wastagePercentMax}
+          priceMin={site.calculator.pricePerRollMin}
+          priceMax={site.calculator.pricePerRollMax}
+          whatsappDigits={site.phone.whatsapp}
+        />
+      </div>
+      <article class="prose-site mt-14 max-w-3xl fade-up">
+        <h2>Tips for Faridabad rooms</h2>
+        <p>
+          Pattern repeats and textured wallpapers can increase wastage. Always confirm coverage printed on the roll and ask us to verify on site — especially for murals and 3D designs.
+          Related reading: <a href="/blog/how-many-wallpaper-rolls/">how many rolls do I need?</a>
+        </p>
+      </article>
+    </div>
+  </section>
+  <CTASection heading="Exact quote chahiye?" subtext="Send your calculator result on WhatsApp or book a free consultation." />
+</BaseLayout>

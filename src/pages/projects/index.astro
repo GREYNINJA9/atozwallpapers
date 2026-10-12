@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTASection from '../../components/CTASection.astro';
+import { breadcrumbJsonLd } from '../../scripts/localBusiness';
+
+const projects = (await getCollection('projects'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+
+const filters = [
+  { id: 'all', label: 'All' },
+  { id: 'living-room', label: 'Living room' },
+  { id: 'bedroom', label: 'Bedroom' },
+  { id: 'kids', label: 'Kids' },
+  { id: 'office', label: 'Office' },
+  { id: 'full-home', label: 'Full home' },
+];
+---
+
+<BaseLayout
+  title="Wallpaper Projects Faridabad"
+  description="Browse wallpaper and interior projects across Sector 19, NIT, Greater Faridabad and Ballabgarh. Before/after stories from A to Z Wallpapers."
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Projects', path: '/projects/' },
+    ]),
+  ]}
+>
+  <section class="section-pad">
+    <div class="container-site">
+      <h1 class="text-4xl sm:text-5xl fade-up">Projects</h1>
+      <p class="mt-4 max-w-2xl text-charcoal-muted fade-up">
+        Filter by room type. Images are placeholders until real project photos are supplied.
+      </p>
+
+      <div class="mt-8 flex flex-wrap gap-2 fade-up" role="group" aria-label="Filter projects">
+        {
+          filters.map((f) => (
+            <button
+              type="button"
+              class="project-filter btn-secondary min-h-11 px-4 text-sm aria-pressed:border-terracotta aria-pressed:text-terracotta"
+              data-filter={f.id}
+              aria-pressed={f.id === 'all' ? 'true' : 'false'}
+            >
+              {f.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" id="project-grid">
+        {
+          projects.map((p) => (
+            <a
+              href={`/projects/${p.id}/`}
+              data-room={p.data.roomType}
+              class="project-card group relative min-h-[260px] overflow-hidden rounded-lg no-underline fade-up"
+            >
+              <img
+                src={p.data.afterImage}
+                alt={`PLACEHOLDER: ${p.data.title}`}
+                width="1200"
+                height="900"
+                loading="lazy"
+                class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 to-transparent" />
+              <div class="absolute inset-x-0 bottom-0 p-5">
+                <p class="text-xs text-cream/70 uppercase">{p.data.locationArea} · {p.data.roomType.replace('-', ' ')}</p>
+                <h2 class="mt-1 font-heading text-xl text-cream">{p.data.title}</h2>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+  <CTASection />
+</BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.project-filter');
+  const cards = document.querySelectorAll<HTMLElement>('.project-card');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter || 'all';
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      cards.forEach((card) => {
+        const show = f === 'all' || card.dataset.room === f;
+        card.classList.toggle('hidden', !show);
+      });
+    });
+  });
+</script>

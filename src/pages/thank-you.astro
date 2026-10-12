@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site, whatsappHref, telHref } from '../data/site';
+
+const wa = whatsappHref();
+const tel = telHref();
+---
+
+<BaseLayout
+  title="Thank you"
+  description="Thanks for contacting A to Z Wallpapers & Interiors. We will call you within one business day."
+  noindex={true}
+>
+  <section class="section-pad">
+    <div class="container-site max-w-xl text-center">
+      <h1 class="text-4xl sm:text-5xl">Thank you</h1>
+      <p class="mt-4 text-charcoal-muted leading-relaxed">
+        Your enquiry is in. {site.cta.replySla} — usually we call within 24 hours on business days.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="/" class="btn-secondary">Back home</a>
+        {
+          wa && (
+            <a href={wa} class="btn-primary" data-track="whatsapp_click" data-track-location="thank_you" target="_blank" rel="noopener noreferrer">
+              Message on WhatsApp
+            </a>
+          )
+        }
+        {
+          tel && (
+            <a href={tel} class="btn-ghost" data-track="call_click" data-track-location="thank_you">
+              Call us
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Backup conversion trigger for GTM
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: 'form_submit', source: 'thank_you_page' });
+</script>

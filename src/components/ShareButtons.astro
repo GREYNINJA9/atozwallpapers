@@ -1,0 +1,53 @@
+---
+interface Props {
+  url: string;
+  title: string;
+  media?: string;
+}
+
+const { url, title, media } = Astro.props;
+const shareText = `${title}`;
+const encodedUrl = encodeURIComponent(url);
+const encodedText = encodeURIComponent(`${shareText} ${url}`);
+const pin =
+  media != null
+    ? `https://pinterest.com/pin/create/button/?url=${encodedUrl}&media=${encodeURIComponent(media)}&description=${encodeURIComponent(shareText)}`
+    : null;
+---
+
+<div class="flex flex-wrap gap-2">
+  <a class="btn-secondary text-xs" href={`https://wa.me/?text=${encodedText}`} target="_blank" rel="noopener noreferrer">
+    WhatsApp
+  </a>
+  <a
+    class="btn-secondary text-xs"
+    href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Facebook
+  </a>
+  {
+    pin && (
+      <a class="btn-secondary text-xs" href={pin} target="_blank" rel="noopener noreferrer" data-pin-do="buttonPin">
+        Pinterest
+      </a>
+    )
+  }
+  <button type="button" class="btn-secondary copy-link text-xs" data-url={url}>Copy link</button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.copy-link').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const shareUrl = btn.dataset.url;
+      if (!shareUrl) return;
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        btn.textContent = 'Copied';
+      } catch {
+        /* ignore */
+      }
+    });
+  });
+</script>

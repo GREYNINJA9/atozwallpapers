@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page not found"
+  description="The page you requested is not available. Browse wallpapers or contact A to Z Wallpapers & Interiors in Faridabad."
+  noindex={true}
+>
+  <section class="section-pad">
+    <div class="container-site max-w-lg text-center">
+      <p class="text-sm font-semibold tracking-wide text-terracotta uppercase">404</p>
+      <h1 class="mt-2 text-4xl">Page not found</h1>
+      <p class="mt-4 text-charcoal-muted">Try the wallpaper hub, projects, or book a free consultation.</p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="/" class="btn-secondary">Home</a>
+        <a href="/wallpapers/" class="btn-secondary">Wallpapers</a>
+        <a href="/contact/" class="btn-primary">Contact</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

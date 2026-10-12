@@ -1,0 +1,37 @@
+---
+title: "How many wallpaper rolls do I need?"
+description: "Worked method for Faridabad walls: width × height, minus openings, plus wastage, divided by roll coverage (default 57 sq ft)."
+pubDate: 2026-02-02
+heroImage: "/images/blog-4.jpg"
+ogImage: "/images/og-default.jpg"
+tags: ["Faridabad", "calculator", "rolls"]
+primaryKeyword: "wallpaper installation Faridabad"
+draft: false
+---
+
+Roll count is arithmetic plus a little humility. Pattern repeats, murals and out-of-square walls change the answer. Use this method, then let us confirm on site before you pay for print.
+
+## The formula we use
+
+1. Measure wall **width × height** in feet (or convert metres).
+2. **Subtract** door and window areas (and large built-in cupboards you will not paper).
+3. Add **10–15% wastage** (higher for big repeats and beginners).
+4. Divide by **roll coverage**. Many rolls are sold around **57 sq ft**; always read the label. Our calculator default is 57 and is configurable.
+
+Round **up**. A fraction of a roll is still a roll. For a worked tool, open the [wallpaper calculator](/tools/wallpaper-calculator/) and send the result on WhatsApp once the number is live.
+
+## Example (illustrative, not a quote)
+
+A feature wall 12 ft wide and 10 ft high is 120 sq ft. Minus a 15 sq ft window is 105. Plus 15% wastage ≈ 121. At 57 sq ft per roll you need **3 rolls**, not 2. If the paper has a large drop match, you may need a fourth — that is why we ask for the collection name.
+
+Murals are often sold as **panel sets for the wall**, not as 57 sq ft rolls. Custom prints follow the measured rectangle. Do not force mural math into standard roll math.
+
+## Faridabad gotchas
+
+AC units, false-ceiling drops, and chunky skirting change the net area. Two walls in an L-shaped living room are two calculations. Stairs and double-height foyers need a site visit, not a blog.
+
+Installation waste is real: [wallpaper installation](/services/wallpaper-installation/) is where matching happens. Buying “exact” rolls with zero spare is how you panic if a drop is damaged.
+
+## Next step
+
+Use the calculator, then [contact](/contact/) for an exact quote. Free Consultation Book Karein. Related: [customised wallpaper](/wallpapers/customised-printed/) if you are printing panels, and [Sector 19 shop](/wallpaper-shop-sector-19-faridabad/) if you can show us the tape measurements in person.

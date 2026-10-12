@@ -1,0 +1,151 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import LeadForm from '../../components/islands/LeadForm';
+import FaqAccordion from '../../components/islands/FaqAccordion';
+import { getCollection } from 'astro:content';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  const landingPages = [
+    {
+      slug: 'wallpaper-faridabad',
+      defaultHeadline: 'Wallpaper shop in Faridabad — free consultation',
+      keyword: 'wallpaper shop in Faridabad',
+      blurb: 'Customised wallpaper, murals and installation for Faridabad homes. Book a free consult today.',
+    },
+    {
+      slug: 'customised-wallpaper-faridabad',
+      defaultHeadline: 'Customised wallpaper in Faridabad',
+      keyword: 'customised wallpaper Faridabad',
+      blurb: 'Printed and custom designs with installation support across Faridabad & Delhi-NCR.',
+    },
+    {
+      slug: 'interior-wallpaper-sector-19',
+      defaultHeadline: 'Interior wallpaper — Sector 19 Faridabad',
+      keyword: 'interior designer Sector 19 Faridabad',
+      blurb: 'Studio near DPS School, Sector 19. Wallpapers and room makeovers with clear next steps.',
+    },
+  ] as const;
+
+  return landingPages.map((p) => ({ params: { slug: p.slug }, props: { page: p } }));
+}
+
+const { page } = Astro.props;
+
+// Sanitise optional ?kw= — length-limited, strip HTML-ish chars (applied client-side too)
+const rawKw = Astro.url.searchParams.get('kw') || '';
+const safeKw = rawKw
+  .replace(/[<>{{}}\"']/g, '')
+  .replace(/\s+/g, ' ')
+  .trim()
+  .slice(0, 60);
+const headline = safeKw || page.defaultHeadline;
+
+const projects = (await getCollection('projects'))
+  .filter((p) => !p.data.draft)
+  .slice(0, 3);
+const testimonials = (await getCollection('testimonials'))
+  .filter((t) => !t.data.draft)
+  .slice(0, 3);
+
+const faqs = [
+  {
+    question: 'How fast can you visit in Faridabad?',
+    answer: 'PLACEHOLDER: confirm lead times with owner. Many consultations can be scheduled within a few business days.',
+  },
+  {
+    question: 'Is consultation free?',
+    answer: 'Yes — Free Consultation Book Karein. Installation and materials are quoted separately after scope is clear.',
+  },
+  {
+    question: 'Do you install as well as supply?',
+    answer: 'Installation is part of how we work. Confirm exact inclusions when you enquire.',
+  },
+];
+---
+
+<LandingLayout
+  title={page.defaultHeadline.slice(0, 55)}
+  description={page.blurb}
+>
+  <section class="border-b border-charcoal/10 bg-cream-dark/30">
+    <div class="container-site grid gap-10 py-10 lg:grid-cols-2 lg:py-14">
+      <div>
+        <h1 id="lp-headline" class="font-heading text-3xl font-semibold text-charcoal sm:text-4xl" data-default={page.defaultHeadline}>
+          {headline}
+        </h1>
+        <p class="mt-4 text-charcoal-muted leading-relaxed">{page.blurb}</p>
+        <ul class="mt-6 grid grid-cols-3 gap-3 text-center text-xs font-medium text-charcoal sm:text-sm">
+          <li class="rounded-lg border border-charcoal/10 bg-cream px-2 py-3">Free consult</li>
+          <li class="rounded-lg border border-charcoal/10 bg-cream px-2 py-3">Install support</li>
+          <li class="rounded-lg border border-charcoal/10 bg-cream px-2 py-3">Sector 19 base</li>
+        </ul>
+      </div>
+      <div class="rounded-lg border border-charcoal/10 bg-cream p-5 shadow-soft sm:p-6">
+        <h2 class="font-heading text-xl">Get a callback</h2>
+        <p class="mt-1 text-sm text-charcoal-muted">{site.cta.replySla}</p>
+        <div class="relative mt-4">
+          <LeadForm
+            client:idle
+            endpoint={site.formEndpoint}
+            whatsappDigits={site.phone.whatsapp}
+            compact={true}
+            sourceLabel={`lp_${page.slug}`}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad !py-12">
+    <div class="container-site">
+      <h2 class="mb-6 text-2xl">Recent projects</h2>
+      <div class="grid gap-3 sm:grid-cols-3">
+        {
+          projects.map((p) => (
+            <a href={`/projects/${p.id}/`} class="group relative min-h-[180px] overflow-hidden rounded-lg no-underline">
+              <img src={p.data.afterImage} alt={`PLACEHOLDER: ${p.data.title}`} width="800" height="600" loading="lazy" class="absolute inset-0 h-full w-full object-cover" />
+              <div class="absolute inset-0 bg-gradient-to-t from-charcoal/70 to-transparent" />
+              <p class="absolute inset-x-0 bottom-0 p-3 text-sm text-cream">{p.data.title}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad !py-12 bg-cream-dark/25">
+    <div class="container-site">
+      <h2 class="mb-6 text-2xl">Clients say</h2>
+      <p class="mb-4 text-xs text-charcoal-muted">Placeholder quotes — replace with real Google reviews.</p>
+      <div class="grid gap-4 md:grid-cols-3">
+        {
+          testimonials.map((t) => (
+            <blockquote class="rounded-lg border border-charcoal/10 bg-cream p-4 text-sm text-charcoal-muted">
+              “{t.data.quote}”
+              <footer class="mt-3 font-medium text-charcoal">{t.data.author}</footer>
+            </blockquote>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad !py-12">
+    <div class="container-site max-w-2xl">
+      <h2 class="mb-6 text-2xl">FAQ</h2>
+      <FaqAccordion client:visible items={faqs} />
+    </div>
+  </section>
+</LandingLayout>
+
+<script>
+  // Client-side kw sanitisation for crawlers that skip SSR query (and for SPA-like shares)
+  const h = document.getElementById('lp-headline');
+  if (h) {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('kw') || '';
+    const safe = raw.replace(/[<>{}"']/g, '').replace(/\s+/g, ' ').trim().slice(0, 60);
+    if (safe) h.textContent = safe;
+  }
+</script>

@@ -1,0 +1,75 @@
+---
+import { site } from '../../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  article?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+  };
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage = '/images/og-default.png',
+  ogType = 'website',
+  noindex = false,
+  article,
+} = Astro.props;
+
+const brand = site.shortName;
+const pageTitle = title.includes(site.name) || title.includes(brand) ? title : `${title} | ${brand}`;
+const titleTag = pageTitle.length > 60 ? pageTitle.slice(0, 59) : pageTitle;
+const canonicalUrl = canonical
+  ? new URL(canonical, site.url).href
+  : new URL(Astro.url.pathname, site.url).href;
+const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, site.url).href;
+const twitterHandle = site.social.instagram
+  ? `@${site.social.instagram.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '')}`
+  : undefined;
+---
+
+<title>{titleTag}</title>
+<meta name="description" content={description.slice(0, 155)} />
+<link rel="canonical" href={canonicalUrl} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+{!noindex && <meta name="robots" content="index, follow, max-image-preview:large" />}
+
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:locale" content="en_IN" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description.slice(0, 155)} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description.slice(0, 155)} />
+<meta name="twitter:image" content={ogImageUrl} />
+{twitterHandle && <meta name="twitter:site" content={twitterHandle} />}
+
+{/* Pinterest rich pins — allow Save on gallery images */}
+<meta property="og:see_also" content={site.social.pinterest || site.url} />
+<meta name="pinterest-rich-pin" content="true" />
+
+{article?.publishedTime && (
+  <meta property="article:published_time" content={article.publishedTime} />
+)}
+{article?.modifiedTime && (
+  <meta property="article:modified_time" content={article.modifiedTime} />
+)}
+
+<meta name="geo.region" content="IN-HR" />
+<meta name="geo.placename" content="Faridabad" />
+<meta name="geo.position" content={`${site.geo.latitude};${site.geo.longitude}`} />
+<meta name="ICBM" content={`${site.geo.latitude}, ${site.geo.longitude}`} />

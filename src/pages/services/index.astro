@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTASection from '../../components/CTASection.astro';
+import { services } from '../../data/services';
+import { breadcrumbJsonLd } from '../../scripts/localBusiness';
+---
+
+<BaseLayout
+  title="Interior & Wallpaper Services"
+  description="Wallpaper installation, customised design, wall panels, flooring, ceiling and full-room makeovers in Faridabad from A to Z Wallpapers & Interiors."
+  jsonLd={[
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Services', path: '/services/' },
+    ]),
+  ]}
+>
+  <section class="section-pad">
+    <div class="container-site">
+      <h1 class="text-4xl sm:text-5xl fade-up">Services</h1>
+      <p class="mt-4 max-w-2xl text-charcoal-muted fade-up">
+        Confirm the live service list and starting prices with the owner (TODO-CONFIRM). Never invent awards or years in business.
+      </p>
+      <ul class="mt-12 grid gap-4 sm:grid-cols-2">
+        {
+          services.map((s) => (
+            <li class="rounded-lg border border-charcoal/10 bg-cream p-6 shadow-soft fade-up">
+              <h2 class="font-heading text-2xl">
+                <a href={`/services/${s.slug}/`} class="text-charcoal no-underline hover:text-terracotta">
+                  {s.h1}
+                </a>
+              </h2>
+              <p class="mt-2 text-sm text-charcoal-muted">{s.summary}</p>
+              <p class="mt-4 text-sm font-medium text-charcoal">
+                Starting price:{' '}
+                {s.startingPrice ?? <span class="text-charcoal-muted font-normal">TODO-CONFIRM</span>}
+              </p>
+              <a href={`/services/${s.slug}/`} class="mt-4 inline-block text-sm font-medium text-terracotta underline">
+                Learn more
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+  <CTASection />
+</BaseLayout>

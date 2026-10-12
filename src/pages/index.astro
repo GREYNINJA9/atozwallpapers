@@ -1,0 +1,298 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTASection from '../components/CTASection.astro';
+import FaqAccordion from '../components/islands/FaqAccordion';
+import { site } from '../data/site';
+import { faqJsonLd } from '../scripts/localBusiness';
+
+const projects = (await getCollection('projects'))
+  .filter((p) => !p.data.draft && p.data.featured)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+  .slice(0, 4);
+
+const wallpapers = (await getCollection('wallpapers'))
+  .filter((w) => !w.data.draft)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 6);
+
+const testimonials = (await getCollection('testimonials')).filter((t) => !t.data.draft);
+
+const faqs = [
+  {
+    question: 'Do you install wallpaper in Faridabad?',
+    answer:
+      'Yes. We supply and install across Faridabad (including Sector 19, NIT, Greater Faridabad and Ballabgarh) and nearby Delhi-NCR. Confirm current lead times during consultation.',
+  },
+  {
+    question: 'Can I get customised or printed wallpaper?',
+    answer:
+      'Customised and printed options are part of our core offering. Share room photos and measurements for a suitable recommendation — Free Consultation Book Karein.',
+  },
+  {
+    question: 'How do I estimate how many rolls I need?',
+    answer:
+      'Use our wallpaper calculator for an indicative roll count, then WhatsApp the estimate for an exact quote after we review your walls.',
+  },
+  {
+    question: 'Do you only do wallpaper or full interiors too?',
+    answer:
+      'Wallpaper is the focus; we also discuss wall panels, flooring, ceiling and full-room makeovers when relevant. Confirm the exact service list with us before booking.',
+  },
+];
+
+const bentoClass: Record<string, string> = {
+  sm: 'sm:col-span-1 sm:row-span-1',
+  md: 'sm:col-span-1 sm:row-span-1',
+  lg: 'sm:col-span-2 sm:row-span-2',
+};
+---
+
+<BaseLayout
+  title="Wallpaper Shop in Faridabad"
+  description="A to Z Wallpapers & Interiors — customised wallpaper, murals and interior makeovers in Sector 19, Faridabad. Free consultation & installation support."
+  includeLocalBusiness={true}
+  jsonLd={[faqJsonLd(faqs)]}
+  ogImage="/images/og-default.png"
+  preloadImage="/images/hero-poster.jpg"
+>
+  <!-- Hero: imagery first -->
+  <section class="relative min-h-[88vh] overflow-hidden" aria-label="Hero">
+    <img
+      src="/images/hero-poster.jpg"
+      alt="PLACEHOLDER: replace with real A to Z Wallpapers studio or install photo in Faridabad"
+      width="1920"
+      height="1080"
+      fetchpriority="high"
+      decoding="async"
+      class="absolute inset-0 h-full w-full object-cover"
+    />
+    <!-- Optional looping muted video: add public/videos/hero.mp4 when available
+    <video class="absolute inset-0 h-full w-full object-cover" autoplay muted loop playsinline poster="/images/hero-poster.jpg">
+      <source src="/videos/hero.mp4" type="video/mp4" />
+    </video>
+    -->
+    <div class="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-charcoal/25 to-charcoal/10"></div>
+    <div class="container-site relative flex min-h-[88vh] flex-col justify-end pb-16 pt-28 sm:pb-20">
+      <div class="glass max-w-xl rounded-lg p-6 sm:p-8 fade-up">
+        <p class="font-heading text-3xl font-semibold text-charcoal sm:text-4xl lg:text-5xl">
+          {site.name}
+        </p>
+        <h1 class="mt-3 text-lg font-medium text-charcoal-muted sm:text-xl">
+          Wallpaper shop & interiors in Faridabad
+        </h1>
+        <p class="mt-3 max-w-md text-sm leading-relaxed text-charcoal-muted">
+          Customised prints, murals and room makeovers — consultation to installation for Sector 19 & Delhi-NCR.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a
+            href="/contact/"
+            class="btn-primary"
+            data-track="consultation_cta_click"
+            data-track-location="hero"
+          >
+            {site.cta.primaryHinglish}
+          </a>
+          <a href="/wallpapers/" class="btn-secondary">Browse designs</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USP strip -->
+  <section class="border-y border-charcoal/10 bg-cream-dark/30" aria-label="Why choose us">
+    <div class="container-site grid grid-cols-2 gap-6 py-8 lg:grid-cols-4">
+      {
+        site.usp.map((u) => (
+          <p class="text-center text-sm font-medium text-charcoal sm:text-base fade-up">{u}</p>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Wallpaper categories bento -->
+  <section class="section-pad" aria-labelledby="cats-heading">
+    <div class="container-site">
+      <div class="mb-10 max-w-2xl fade-up">
+        <h2 id="cats-heading" class="text-3xl sm:text-4xl">Wallpaper collections</h2>
+        <p class="mt-3 text-charcoal-muted">
+          Explore categories popular with Faridabad homes — each page has unique guidance and a gallery of placeholders until real photos arrive.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          wallpapers.map((w, i) => (
+            <a
+              href={`/wallpapers/${w.id}/`}
+              class:list={[
+                'group relative overflow-hidden rounded-lg no-underline fade-up',
+                i === 0 || i === 3 ? 'sm:row-span-2 min-h-[280px] sm:min-h-[420px]' : 'min-h-[220px]',
+              ]}
+            >
+              <img
+                src={w.data.heroImage}
+                alt={`PLACEHOLDER gallery for ${w.data.title}`}
+                width="800"
+                height="1000"
+                loading="lazy"
+                class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-charcoal/20 to-transparent" />
+              <div class="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                <p class="font-heading text-xl text-cream">{w.data.title.replace(' Faridabad', '')}</p>
+                <p class="mt-1 text-xs text-cream/75">View collection →</p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+      <p class="mt-6">
+        <a href="/wallpapers/" class="text-sm font-medium text-terracotta underline">All wallpaper categories</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Featured projects -->
+  <section class="section-pad bg-cream-dark/25" aria-labelledby="projects-heading">
+    <div class="container-site">
+      <div class="mb-10 max-w-2xl fade-up">
+        <h2 id="projects-heading" class="text-3xl sm:text-4xl">Featured projects</h2>
+        <p class="mt-3 text-charcoal-muted">
+          Area-level stories from Faridabad. Photos are labelled placeholders until the client supplies real project images.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          projects.map((p) => (
+            <a
+              href={`/projects/${p.id}/`}
+              class:list={[
+                'group relative min-h-[240px] overflow-hidden rounded-lg no-underline fade-up',
+                bentoClass[p.data.bentoSize] || '',
+                p.data.bentoSize === 'lg' ? 'lg:min-h-[480px]' : '',
+              ]}
+            >
+              <img
+                src={p.data.afterImage}
+                alt={`PLACEHOLDER: ${p.data.title}`}
+                width="1200"
+                height="900"
+                loading="lazy"
+                class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 to-transparent" />
+              <div class="absolute inset-x-0 bottom-0 p-5">
+                <p class="text-xs tracking-wide text-cream/70 uppercase">{p.data.locationArea}</p>
+                <p class="mt-1 font-heading text-xl text-cream">{p.data.title}</p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+      <p class="mt-6">
+        <a href="/projects/" class="text-sm font-medium text-terracotta underline">View all projects</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="section-pad" aria-labelledby="process-heading">
+    <div class="container-site">
+      <h2 id="process-heading" class="mb-10 text-3xl sm:text-4xl fade-up">How we work</h2>
+      <ol class="grid gap-8 md:grid-cols-3">
+        {
+          [
+            { t: 'Consult', d: 'Share room photos or visit us near DPS School, Sector 19. We clarify scope and materials.' },
+            { t: 'Design & Sample', d: 'Shortlist patterns or custom prints. Review samples before you commit.' },
+            { t: 'Install', d: 'Professional installation with clean finishing. Confirm timeline when you book.' },
+          ].map((s, i) => (
+            <li class="fade-up">
+              <p class="text-sm font-semibold tracking-wide text-terracotta uppercase">Step {i + 1}</p>
+              <p class="mt-2 font-heading text-2xl">{s.t}</p>
+              <p class="mt-2 text-sm leading-relaxed text-charcoal-muted">{s.d}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section-pad bg-cream-dark/25" aria-labelledby="t-heading">
+    <div class="container-site">
+      <h2 id="t-heading" class="mb-3 text-3xl sm:text-4xl fade-up">What clients say</h2>
+      <p class="mb-8 max-w-xl text-sm text-charcoal-muted fade-up">
+        Placeholder quotes only — replace with real Google reviews (with permission). Do not publish fabricated ratings.
+      </p>
+      <div class="grid gap-4 md:grid-cols-3">
+        {
+          testimonials.map((t) => (
+            <blockquote class="rounded-lg border border-charcoal/10 bg-cream p-5 shadow-soft fade-up">
+              <p class="text-sm leading-relaxed text-charcoal-muted">“{t.data.quote}”</p>
+              <footer class="mt-4 text-sm font-medium text-charcoal">
+                {t.data.author}
+                {t.data.locationArea && <span class="font-normal text-charcoal-muted"> · {t.data.locationArea}</span>}
+              </footer>
+            </blockquote>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Instagram static grid -->
+  <section class="section-pad" aria-labelledby="ig-heading">
+    <div class="container-site">
+      <div class="mb-8 flex flex-wrap items-end justify-between gap-4 fade-up">
+        <div>
+          <h2 id="ig-heading" class="text-3xl sm:text-4xl">From Instagram</h2>
+          <p class="mt-2 text-sm text-charcoal-muted">
+            Curated placeholders linking out — replace with real posts. No layout shift: fixed square tiles.
+          </p>
+        </div>
+        {
+          site.social.instagram ? (
+            <a href={site.social.instagram} class="btn-secondary text-sm" target="_blank" rel="noopener noreferrer">
+              Follow on Instagram
+            </a>
+          ) : (
+            <p class="text-xs text-charcoal-muted">Instagram URL: TODO-CONFIRM in site.ts</p>
+          )
+        }
+      </div>
+      <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
+        {
+          [1, 2, 3, 4, 5, 6].map((n) => (
+            <a
+              href={site.social.instagram || '/contact/'}
+              class="aspect-square overflow-hidden rounded-lg"
+              target={site.social.instagram ? '_blank' : undefined}
+              rel={site.social.instagram ? 'noopener noreferrer' : undefined}
+            >
+              <img
+                src={`/images/insta-${n}.jpg`}
+                alt={`PLACEHOLDER Instagram post ${n}`}
+                width="600"
+                height="600"
+                loading="lazy"
+                class="h-full w-full object-cover"
+              />
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ teaser -->
+  <section class="section-pad bg-cream-dark/25" aria-labelledby="faq-heading">
+    <div class="container-site max-w-3xl">
+      <h2 id="faq-heading" class="mb-8 text-3xl sm:text-4xl fade-up">Quick answers</h2>
+      <div class="fade-up">
+        <FaqAccordion client:visible items={faqs} />
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>
