@@ -6,6 +6,8 @@ import BeforeAfter from '../../components/islands/BeforeAfter';
 import ShareButtons from '../../components/ShareButtons.astro';
 import { site } from '../../data/site';
 import { breadcrumbJsonLd } from '../../scripts/localBusiness';
+import { getImage, Image } from 'astro:assets';
+import { getImageAsset } from '../../data/imageAssets';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -19,6 +21,21 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const d = entry.data;
 const shareUrl = `${site.url}/projects/${entry.id}/`;
+const beforeImage = await getImage({
+  src: getImageAsset(d.beforeImage),
+  width: 1200,
+  height: 900,
+  format: 'avif',
+  quality: 85,
+});
+const afterImage = await getImage({
+  src: getImageAsset(d.afterImage),
+  width: 1200,
+  height: 900,
+  format: 'avif',
+  quality: 85,
+});
+const portraitImage = getImageAsset('portrait-pinterest.jpg');
 ---
 
 <BaseLayout
@@ -49,8 +66,8 @@ const shareUrl = `${site.url}/projects/${entry.id}/`;
     <div class="container-site max-w-4xl fade-up">
       <BeforeAfter
         client:visible
-        beforeSrc={d.beforeImage}
-        afterSrc={d.afterImage}
+        beforeSrc={beforeImage.src}
+        afterSrc={afterImage.src}
         beforeAlt={`PLACEHOLDER before — ${d.title}`}
         afterAlt={`PLACEHOLDER after — ${d.title}`}
       />
@@ -102,9 +119,11 @@ const shareUrl = `${site.url}/projects/${entry.id}/`;
         </dl>
 
         <div class="overflow-hidden rounded-lg border border-charcoal/10">
-          <img
-            src="/images/portrait-pinterest.jpg"
+          <Image
+            src={portraitImage}
             alt={`PLACEHOLDER Pinterest 2:3 crop for ${d.title}`}
+            format="avif"
+            quality={"high"}
             width="800"
             height="1200"
             class="aspect-[2/3] w-full object-cover"

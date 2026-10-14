@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CTASection from '../../components/CTASection.astro';
 import { breadcrumbJsonLd } from '../../scripts/localBusiness';
+import { Image } from 'astro:assets';
+import { getImageAsset } from '../../data/imageAssets';
 
 const cats = (await getCollection('wallpapers'))
   .filter((w) => !w.data.draft)
@@ -28,29 +30,34 @@ const cats = (await getCollection('wallpapers'))
       </p>
       <div class="mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {
-          cats.map((w, i) => (
-            <a
-              href={`/wallpapers/${w.id}/`}
-              class:list={[
-                'group relative min-h-[240px] overflow-hidden rounded-lg no-underline fade-up',
-                i % 5 === 0 ? 'sm:col-span-2 sm:min-h-[320px]' : '',
-              ]}
-            >
-              <img
-                src={w.data.heroImage}
-                alt={`PLACEHOLDER: ${w.data.title}`}
-                width="800"
-                height="600"
-                loading="lazy"
-                class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-charcoal/75 to-transparent" />
-              <div class="absolute inset-x-0 bottom-0 p-5">
-                <h2 class="font-heading text-xl text-cream">{w.data.title}</h2>
-                <p class="mt-1 line-clamp-2 text-xs text-cream/75">{w.data.description}</p>
-              </div>
-            </a>
-          ))
+          cats.map((w, i) => {
+            const imageSrc = getImageAsset(w.data.heroImage);
+            return (
+              <a
+                href={`/wallpapers/${w.id}/`}
+                class:list={[
+                  'group relative min-h-[240px] overflow-hidden rounded-lg no-underline fade-up',
+                  i % 5 === 0 ? 'sm:col-span-2 sm:min-h-[320px]' : '',
+                ]}
+              >
+                <Image
+                  src={imageSrc}
+                  alt={`PLACEHOLDER: ${w.data.title}`}
+                  width="800"
+                  height="600"
+                  loading="lazy"
+                  class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+                  format="avif"
+                  quality={"high"}
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-charcoal/75 to-transparent" />
+                <div class="absolute inset-x-0 bottom-0 p-5">
+                  <h2 class="font-heading text-xl text-cream">{w.data.title}</h2>
+                  <p class="mt-1 line-clamp-2 text-xs text-cream/75">{w.data.description}</p>
+                </div>
+              </a>
+            );
+          })
         }
       </div>
     </div>

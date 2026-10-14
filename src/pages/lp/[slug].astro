@@ -4,6 +4,8 @@ import LeadForm from '../../components/islands/LeadForm';
 import FaqAccordion from '../../components/islands/FaqAccordion';
 import { getCollection } from 'astro:content';
 import { site } from '../../data/site';
+import { Image } from 'astro:assets';
+import { getImageAsset } from '../../data/imageAssets';
 
 export function getStaticPaths() {
   const landingPages = [
@@ -104,7 +106,7 @@ const faqs = [
         {
           projects.map((p) => (
             <a href={`/projects/${p.id}/`} class="group relative min-h-[180px] overflow-hidden rounded-lg no-underline">
-              <img src={p.data.afterImage} alt={`PLACEHOLDER: ${p.data.title}`} width="800" height="600" loading="lazy" class="absolute inset-0 h-full w-full object-cover" />
+              <Image src={getImageAsset(p.data.afterImage)} alt={`PLACEHOLDER: ${p.data.title}`} width="800" height="600" loading="lazy" class="absolute inset-0 h-full w-full object-cover" format="avif" quality={"high"} />
               <div class="absolute inset-0 bg-gradient-to-t from-charcoal/70 to-transparent" />
               <p class="absolute inset-x-0 bottom-0 p-3 text-sm text-cream">{p.data.title}</p>
             </a>

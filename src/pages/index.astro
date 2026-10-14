@@ -5,6 +5,9 @@ import CTASection from '../components/CTASection.astro';
 import FaqAccordion from '../components/islands/FaqAccordion';
 import { site } from '../data/site';
 import { faqJsonLd } from '../scripts/localBusiness';
+import { Image } from 'astro:assets';
+import { getImageAsset } from '../data/imageAssets';
+
 
 const projects = (await getCollection('projects'))
   .filter((p) => !p.data.draft && p.data.featured)
@@ -53,14 +56,15 @@ const bentoClass: Record<string, string> = {
   description="A to Z Wallpapers & Interiors — customised wallpaper, murals and interior makeovers in Sector 19, Faridabad. Free consultation & installation support."
   includeLocalBusiness={true}
   jsonLd={[faqJsonLd(faqs)]}
-  ogImage="/images/og-default.png"
-  preloadImage="/images/hero-poster.jpg"
+  ogImage="og-default.jpg"
 >
   <!-- Hero: imagery first -->
   <section class="relative min-h-[88vh] overflow-hidden" aria-label="Hero">
-    <img
-      src="/images/hero-poster.jpg"
+    <Image
+      src={getImageAsset('hero-poster.jpg')}
       alt="PLACEHOLDER: replace with real A to Z Wallpapers studio or install photo in Faridabad"
+      format="avif"
+      quality={"mid"}
       width="1920"
       height="1080"
       fetchpriority="high"
@@ -68,7 +72,7 @@ const bentoClass: Record<string, string> = {
       class="absolute inset-0 h-full w-full object-cover"
     />
     <!-- Optional looping muted video: add public/videos/hero.mp4 when available
-    <video class="absolute inset-0 h-full w-full object-cover" autoplay muted loop playsinline poster="/images/hero-poster.jpg">
+    <video class="absolute inset-0 h-full w-full object-cover" autoplay muted loop playsinline poster={getImageAsset('hero-poster.jpg').src}>
       <source src="/videos/hero.mp4" type="video/mp4" />
     </video>
     -->
@@ -129,9 +133,11 @@ const bentoClass: Record<string, string> = {
                 i === 0 || i === 3 ? 'sm:row-span-2 min-h-[280px] sm:min-h-[420px]' : 'min-h-[220px]',
               ]}
             >
-              <img
-                src={w.data.heroImage}
+              <Image
+                src={getImageAsset(w.data.heroImage)}
                 alt={`PLACEHOLDER gallery for ${w.data.title}`}
+                format="avif"
+                quality={"mid"}
                 width="800"
                 height="1000"
                 loading="lazy"
@@ -172,9 +178,11 @@ const bentoClass: Record<string, string> = {
                 p.data.bentoSize === 'lg' ? 'lg:min-h-[480px]' : '',
               ]}
             >
-              <img
-                src={p.data.afterImage}
+              <Image
+                src={getImageAsset(p.data.afterImage)}
                 alt={`PLACEHOLDER: ${p.data.title}`}
+                format="avif"
+                quality={"mid"}
                 width="1200"
                 height="900"
                 loading="lazy"
@@ -269,9 +277,11 @@ const bentoClass: Record<string, string> = {
               target={site.social.instagram ? '_blank' : undefined}
               rel={site.social.instagram ? 'noopener noreferrer' : undefined}
             >
-              <img
-                src={`/images/insta-${n}.jpg`}
+              <Image
+                src={getImageAsset(`insta-${n}.jpg`)}
                 alt={`PLACEHOLDER Instagram post ${n}`}
+                format="avif"
+                quality={"mid"}
                 width="600"
                 height="600"
                 loading="lazy"

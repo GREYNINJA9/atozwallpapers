@@ -6,6 +6,8 @@ import FaqAccordion from '../../components/islands/FaqAccordion';
 import Lightbox from '../../components/islands/Lightbox';
 import { site } from '../../data/site';
 import { breadcrumbJsonLd, faqJsonLd, serviceJsonLd } from '../../scripts/localBusiness';
+import { getImage, Image } from 'astro:assets';
+import { getImageAsset, getImageUrl } from '../../data/imageAssets';
 
 export async function getStaticPaths() {
   const walls = await getCollection('wallpapers');
@@ -18,10 +20,20 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const d = entry.data;
-const gallery = d.gallery.map((src) => ({
-  src,
-  alt: `PLACEHOLDER gallery image for ${d.title}`,
-}));
+const heroImage = getImageAsset(d.heroImage);
+const gallery = await Promise.all(
+  d.gallery.map(async (name) => ({
+    src: (
+      await getImage({
+        src: getImageAsset(name),
+        width: 1200,
+        format: 'avif',
+        quality: 85,
+      })
+    ).src,
+    alt: `${name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ')} wallpaper image`,
+  })),
+);
 ---
 
 <BaseLayout
@@ -38,15 +50,17 @@ const gallery = d.gallery.map((src) => ({
       name: d.title,
       description: d.description,
       path: `/wallpapers/${entry.id}/`,
-      image: d.heroImage,
+      image: getImageUrl(d.heroImage),
     }),
     ...(d.faqs.length ? [faqJsonLd(d.faqs)] : []),
   ]}
 >
   <section class="relative min-h-[48vh] overflow-hidden">
-    <img
-      src={d.heroImage}
-      alt={`PLACEHOLDER hero for ${d.title}`}
+    <Image
+      src={heroImage}
+      alt={d.title}
+      format="avif"
+      quality={"high"}
       width="1600"
       height="900"
       class="absolute inset-0 h-full w-full object-cover"

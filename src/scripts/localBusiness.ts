@@ -1,4 +1,5 @@
 import { site, fullAddress } from '../data/site';
+import { getImageUrl } from '../data/imageAssets';
 
 export function localBusinessJsonLd() {
   const sameAs = [
@@ -16,7 +17,7 @@ export function localBusinessJsonLd() {
     name: site.name,
     description: site.description,
     url: site.url,
-    image: `${site.url}/images/og-default.png`,
+    image: getImageUrl('og-default.jpg'),
     telephone: site.phone.e164 || undefined,
     email: site.email || undefined,
     address: {
@@ -112,7 +113,7 @@ export function articleJsonLd(opts: {
     '@type': 'Article',
     headline: opts.title,
     description: opts.description,
-    image: opts.image.startsWith('http') ? opts.image : `${site.url}${opts.image}`,
+    image: getImageUrl(opts.image),
     datePublished: opts.datePublished,
     dateModified: opts.dateModified || opts.datePublished,
     author: {
@@ -143,7 +144,7 @@ export function serviceJsonLd(opts: {
     name: opts.name,
     description: opts.description,
     url: `${site.url}${opts.path}`,
-    image: opts.image ? `${site.url}${opts.image}` : undefined,
+    image: opts.image ? getImageUrl(opts.image) : undefined,
     provider: { '@id': `${site.url}/#business` },
     brand: { '@type': 'Brand', name: site.name },
     areaServed: {

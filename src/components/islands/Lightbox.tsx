@@ -45,8 +45,6 @@ export default function Lightbox({ images, pageUrl = '', siteOrigin = '' }: Prop
               <img
                 src={img.src}
                 alt={img.alt}
-                width={800}
-                height={1000}
                 loading="lazy"
                 class="aspect-[2/3] w-full object-cover transition duration-500 group-hover:scale-[1.02] sm:aspect-[4/3]"
                 data-pin-nopin="false"

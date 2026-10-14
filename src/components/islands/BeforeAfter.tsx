@@ -46,15 +46,13 @@ export default function BeforeAfter({
       onTouchStart={(e) => setFromClientX(e.touches[0].clientX)}
       onTouchMove={(e) => setFromClientX(e.touches[0].clientX)}
     >
-      <img src={afterSrc} alt={afterAlt} class="absolute inset-0 h-full w-full object-cover" width={1200} height={900} loading="lazy" />
+      <img src={afterSrc} alt={afterAlt} class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
       <div class="absolute inset-0 overflow-hidden" style={{ width: `${pos}%` }}>
         <img
           src={beforeSrc}
           alt={beforeAlt}
           class="absolute inset-0 h-full max-w-none object-cover"
           style={{ width: container.current ? `${container.current.clientWidth}px` : '100%' }}
-          width={1200}
-          height={900}
           loading="lazy"
         />
       </div>

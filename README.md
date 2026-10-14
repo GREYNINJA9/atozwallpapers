@@ -52,7 +52,7 @@ If the URL leaks: Deploy → Manage deployments → New version (or retire old).
 ### Add a new project (5 steps)
 
 1. Copy `src/content/projects/sector-19-living-room.md` to a new slug file.
-2. Fill frontmatter: title, roomType, locationArea (area-level only), images under `/public/images/`.
+2. Fill frontmatter: title, roomType, locationArea (area-level only), and image filenames from `src/assets/images/`.
 3. Replace PLACEHOLDER body; set `clientQuote` only from a real permitted quote.
 4. Leave `budgetRange` as TODO until confirmed — never invent prices.
 5. `npm run build` and open `/projects/your-slug/`.

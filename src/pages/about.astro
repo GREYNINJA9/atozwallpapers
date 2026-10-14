@@ -3,6 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import CTASection from '../components/CTASection.astro';
 import { site, fullAddress } from '../data/site';
 import { breadcrumbJsonLd } from '../scripts/localBusiness';
+import { Image } from 'astro:assets';
+import { getImageAsset } from '../data/imageAssets';
 ---
 
 <BaseLayout
@@ -31,9 +33,11 @@ import { breadcrumbJsonLd } from '../scripts/localBusiness';
         </p>
       </div>
       <div class="fade-up">
-        <img
-          src="/images/hero-poster.jpg"
+        <Image
+          src={getImageAsset('hero-poster.jpg')}
           alt="PLACEHOLDER: replace with real studio or team photo"
+          format="avif"
+          quality={"mid"}
           width="1200"
           height="900"
           class="rounded-lg object-cover"

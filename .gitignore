@@ -20,9 +20,6 @@ pnpm-debug.log*
 # local editor settings
 .vscode/
 
-# Netlify config is not used for Vercel hosting
-netlify.toml
-
 # macOS-specific files
 .DS_Store
 

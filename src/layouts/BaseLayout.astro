@@ -23,7 +23,6 @@ interface Props {
   article?: { publishedTime?: string; modifiedTime?: string };
   minimalHeader?: boolean;
   hideChrome?: boolean;
-  preloadImage?: string;
 }
 
 const {
@@ -38,7 +37,6 @@ const {
   article,
   minimalHeader = false,
   hideChrome = false,
-  preloadImage,
 } = Astro.props;
 
 const schemas = [
@@ -65,11 +63,6 @@ const schemas = [
       canonical={canonical}
       article={article}
     />
-    {
-      preloadImage && (
-        <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />
-      )
-    }
     {schemas.length > 0 && <JsonLd data={schemas} />}
     <Analytics />
   </head>

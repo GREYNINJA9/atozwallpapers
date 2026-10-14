@@ -5,6 +5,8 @@ import CTASection from '../../components/CTASection.astro';
 import ShareButtons from '../../components/ShareButtons.astro';
 import { site } from '../../data/site';
 import { articleJsonLd, breadcrumbJsonLd } from '../../scripts/localBusiness';
+import { Image } from 'astro:assets';
+import { getImageAsset, getImageUrl } from '../../data/imageAssets';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -16,6 +18,7 @@ const { Content } = await render(entry);
 const d = entry.data;
 const path = `/blog/${entry.id}/`;
 const shareUrl = `${site.url}${path}`;
+const heroImage = getImageAsset(d.heroImage);
 ---
 
 <BaseLayout
@@ -37,7 +40,7 @@ const shareUrl = `${site.url}${path}`;
       title: d.title,
       description: d.description,
       path,
-      image: d.heroImage,
+      image: getImageUrl(d.heroImage),
       datePublished: d.pubDate.toISOString(),
       dateModified: (d.updatedDate || d.pubDate).toISOString(),
     }),
@@ -56,9 +59,11 @@ const shareUrl = `${site.url}${path}`;
       </div>
     </header>
     <div class="container-site max-w-3xl">
-      <img
-        src={d.heroImage}
-        alt={`PLACEHOLDER hero for ${d.title}`}
+      <Image
+        src={heroImage}
+        alt={d.title}
+        format="avif"
+        quality={"high"}
         width="1200"
         height="675"
         class="mb-10 aspect-video w-full rounded-lg object-cover"
@@ -70,7 +75,7 @@ const shareUrl = `${site.url}${path}`;
       <div class="mt-10 flex flex-wrap gap-2 border-t border-charcoal/10 pt-6">
         <a class="btn-secondary text-xs" href={`https://wa.me/?text=${encodeURIComponent(d.title + ' ' + shareUrl)}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
         <a class="btn-secondary text-xs" href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer">Facebook</a>
-        <a class="btn-secondary text-xs" href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(site.url + d.heroImage)}&description=${encodeURIComponent(d.title)}`} target="_blank" rel="noopener noreferrer">Pinterest</a>
+        <a class="btn-secondary text-xs" href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(getImageUrl(d.heroImage))}&description=${encodeURIComponent(d.title)}`} target="_blank" rel="noopener noreferrer">Pinterest</a>
         <button type="button" class="btn-secondary text-xs" id="copy-blog" data-url={shareUrl}>Copy link</button>
       </div>
     </div>

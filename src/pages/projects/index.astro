@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CTASection from '../../components/CTASection.astro';
 import { breadcrumbJsonLd } from '../../scripts/localBusiness';
+import { Image } from 'astro:assets';
+import { getImageAsset } from '../../data/imageAssets';
 
 const projects = (await getCollection('projects'))
   .filter((p) => !p.data.draft)
@@ -52,27 +54,32 @@ const filters = [
 
       <div class="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" id="project-grid">
         {
-          projects.map((p) => (
-            <a
-              href={`/projects/${p.id}/`}
-              data-room={p.data.roomType}
-              class="project-card group relative min-h-[260px] overflow-hidden rounded-lg no-underline fade-up"
-            >
-              <img
-                src={p.data.afterImage}
-                alt={`PLACEHOLDER: ${p.data.title}`}
-                width="1200"
-                height="900"
-                loading="lazy"
-                class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 to-transparent" />
-              <div class="absolute inset-x-0 bottom-0 p-5">
-                <p class="text-xs text-cream/70 uppercase">{p.data.locationArea} · {p.data.roomType.replace('-', ' ')}</p>
-                <h2 class="mt-1 font-heading text-xl text-cream">{p.data.title}</h2>
-              </div>
-            </a>
-          ))
+          projects.map((p) => {
+            const imageSrc = getImageAsset(p.data.afterImage);
+            return (
+              <a
+                href={`/projects/${p.id}/`}
+                data-room={p.data.roomType}
+                class="project-card group relative min-h-[260px] overflow-hidden rounded-lg no-underline fade-up"
+              >
+                <Image
+                  src={imageSrc}
+                  alt={`PLACEHOLDER: ${p.data.title}`}
+                  width="1200"
+                  height="900"
+                  loading="lazy"
+                  class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+                  format="avif"
+                  quality={"high"}
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 to-transparent" />
+                <div class="absolute inset-x-0 bottom-0 p-5">
+                  <p class="text-xs text-cream/70 uppercase">{p.data.locationArea} · {p.data.roomType.replace('-', ' ')}</p>
+                  <h2 class="mt-1 font-heading text-xl text-cream">{p.data.title}</h2>
+                </div>
+              </a>
+            );
+          })
         }
       </div>
     </div>

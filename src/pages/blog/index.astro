@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CTASection from '../../components/CTASection.astro';
 import { breadcrumbJsonLd } from '../../scripts/localBusiness';
+import { Image } from 'astro:assets';
+import { getImageAsset } from '../../data/imageAssets';
 
 const posts = (await getCollection('blog'))
   .filter((p) => !p.data.draft)
@@ -27,25 +29,30 @@ const posts = (await getCollection('blog'))
       </p>
       <ul class="mt-12 grid gap-6 sm:grid-cols-2">
         {
-          posts.map((p) => (
-            <li class="fade-up">
-              <a href={`/blog/${p.id}/`} class="group block no-underline">
-                <img
-                  src={p.data.heroImage}
-                  alt={`PLACEHOLDER: ${p.data.title}`}
-                  width="1200"
-                  height="675"
-                  loading="lazy"
-                  class="aspect-video w-full rounded-lg object-cover transition duration-500 group-hover:opacity-95"
-                />
-                <h2 class="mt-4 font-heading text-2xl text-charcoal group-hover:text-terracotta">{p.data.title}</h2>
+          posts.map((p) => {
+            const imageSrc = getImageAsset(p.data.heroImage);
+            return (
+              <li class="fade-up">
+                <a href={`/blog/${p.id}/`} class="group block no-underline">
+                  <Image
+                    src={imageSrc}
+                    alt={p.data.title}
+                    width="1200"
+                    height="675"
+                    loading="lazy"
+                    class="aspect-video w-full rounded-lg object-cover transition duration-500 group-hover:opacity-95"
+                    format="avif"
+                    quality={"high"}
+                  />
+                  <h2 class="mt-4 font-heading text-2xl text-charcoal group-hover:text-terracotta">{p.data.title}</h2>
                 <p class="mt-2 text-sm text-charcoal-muted">{p.data.description}</p>
-                <time class="mt-2 block text-xs text-charcoal-muted/80" datetime={p.data.pubDate.toISOString()}>
-                  {p.data.pubDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}
-                </time>
-              </a>
-            </li>
-          ))
+                  <time class="mt-2 block text-xs text-charcoal-muted/80" datetime={p.data.pubDate.toISOString()}>
+                    {p.data.pubDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </time>
+                </a>
+              </li>
+            );
+          })
         }
       </ul>
     </div>
