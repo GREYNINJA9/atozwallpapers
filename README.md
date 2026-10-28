@@ -119,19 +119,7 @@ src/layouts/              # Base + LP layouts
 src/pages/                # Routes
 apps-script/Code.gs       # Lead backend
 docs/                     # PPC + social
-netlify.toml              # Headers + cache
 ```
-
-## TODO-CONFIRM (blockers before ads / launch)
-
-- Phone / WhatsApp (directories conflict)
-- Owner name, email, hours, GST
-- Social URLs, GBP URL, Maps place + embed + exact coordinates
-- Domain (`atozwallpapers.in` placeholder)
-- `formEndpoint`, `gtmId`
-- Starting prices for services/categories
-- Real photos, real testimonials
-- Final service list with owner
 
 ## License
 

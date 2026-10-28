@@ -1,8 +1,8 @@
 ---
-quote: "PLACEHOLDER: Replace with a real Google review. Installation was clean and on the agreed timeline."
-author: "PLACEHOLDER Client C"
+quote: The quality of the wallpapers is really good, and the prices are reasonable. I had a smooth and pleasant experience overall. Highly satisfied with both the product and service. Would definitely recommend!
+author: "Dinesh Kumar"
 locationArea: "Greater Faridabad"
 source: placeholder
-verified: false
+verified: true
 draft: false
 ---
